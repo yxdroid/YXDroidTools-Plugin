@@ -1,5 +1,5 @@
 # YXDroidTools-Plugin
-Android Studio plugin
+Android Studio plugin,to improve efficiency
 
 ## Generate Selector
 generate selector by selected drawable resources
