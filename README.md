@@ -1,6 +1,9 @@
 # YXDroidTools-Plugin
 
 Android Studio plugin,to improve efficiency
+ 
+## How to install
+download the YXDroidTools-Plugiun-1.0.zip， File->Setting->Plugin->Install plugin from disk
 
 ## Generate Selector
 generate selector by selected drawable resources order
