@@ -1,8 +1,8 @@
 <idea-plugin>
     <id>org.yxdroid.plugin.yxdroidtools</id>
     <name>YXDroid Tools</name>
-    <version>1.0</version>
-    <vendor email="org.yxdroid@gmail.com" url="">yxdroid</vendor>
+    <version>1.0.0</version>
+    <vendor email="org.yxdroid@gmail.com" url="https://github.com/yxdroid/YXDroidTools-Plugin">yxdroid</vendor>
 
     <description><![CDATA[
       the android development tools，include the following:<br>
@@ -39,7 +39,7 @@
             <!-- The <separator> element defines a separator between actions. It can also have an <add-to-group> child element. -->
             <separator/>
 
-            <action id="YXDroidTools.GenerateSelectorAction" class="yxdroid.plugin.actions.GenerateSelector"
+            <action id="YXDroidTools.GenerateSelectorAction" class="yxdroid.plugin.actions.GenerateSelectorAction"
                     text="Generate Selector" description="Generate Selector"/>
             <!-- The <reference> element allows to add an existactionstion to the group. The mandatory "ref" attribute specifies the ID of actionstion to add. -->
             <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>

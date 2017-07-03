@@ -6,8 +6,10 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.apache.http.util.TextUtils;
 
 import java.util.regex.Pattern;
 
@@ -80,7 +82,21 @@ public abstract class BaseAnAction extends AnAction {
 
     protected String showInputDialog(String msg) {
         return Messages.showInputDialog(mProject, msg,
-                "YXDroid Tools", Messages.getInformationIcon());
+                "YXDroid Tools", Messages.getInformationIcon(), "", new InputValidator() {
+                    @Override
+                    public boolean checkInput(String s) {
+                        if (TextUtils.isEmpty(s)) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public boolean canClose(String s) {
+                        return true;
+                    }
+                });
     }
 
     protected void doWrite(Runnable runnable) {

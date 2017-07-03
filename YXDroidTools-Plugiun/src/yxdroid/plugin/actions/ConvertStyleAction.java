@@ -55,6 +55,10 @@ public class ConvertStyleAction extends BaseAnAction {
 
             String styleName = showInputDialog("请输入style名称");
 
+            if (TextUtils.isEmpty(styleName)) {
+                return;
+            }
+
             StringBuffer sb = new StringBuffer();
 
             sb.append(String.format("<style name=\"%s\">\n", styleName));
