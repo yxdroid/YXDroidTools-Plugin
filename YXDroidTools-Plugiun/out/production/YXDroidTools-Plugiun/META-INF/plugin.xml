@@ -2,7 +2,7 @@
     <id>org.yxdroid.plugin.yxdroidtools</id>
     <name>YXDroid Tools</name>
     <version>1.0</version>
-    <vendor email="org.yxdroid@gmail.com" url="http://www.yxdroid.org">yxdroid</vendor>
+    <vendor email="org.yxdroid@gmail.com" url="">yxdroid</vendor>
 
     <description><![CDATA[
       the android development tools，include the following:<br>

@@ -3,7 +3,6 @@ package yxdroid.plugin.actions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -102,7 +101,7 @@ public class ConvertStyleAction extends BaseAnAction {
                 log(tag.getName() + " " + tag.getNamespace() + " " + tag.getText());
             }
 
-            WriteCommandAction.runWriteCommandAction(mProject, () -> {
+            doWrite(() -> {
                 // name namespace value
                 XmlTag styleTag = rootTag.createChildTag("style", null, null, false);
                 styleTag.setAttribute("name", styleName);

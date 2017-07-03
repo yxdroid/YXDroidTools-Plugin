@@ -42,15 +42,12 @@ public class GenerateSelector extends BaseAnAction {
 
             // 如果drawable 不存在 则创建
             if (drawableVFile[0] == null || !drawableVFile[0].exists()) {
-                doWrite(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            drawableVFile[0] = resVFile.createChildDirectory(this, "drawable");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            showTip(e.getMessage());
-                        }
+                doWrite(() -> {
+                    try {
+                        drawableVFile[0] = resVFile.createChildDirectory(this, "drawable");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        showTip(e.getMessage());
                     }
                 });
 
