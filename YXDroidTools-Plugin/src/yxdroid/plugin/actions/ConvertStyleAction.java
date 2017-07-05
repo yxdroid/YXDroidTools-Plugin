@@ -5,12 +5,12 @@ import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
+import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.search.FilenameIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import org.apache.http.util.TextUtils;
@@ -74,7 +74,35 @@ public class ConvertStyleAction extends BaseAnAction {
 
             log(sb.toString());
 
-            PsiFile[] psiFiles = FilenameIndex.getFilesByName(mProject, "styles.xml", GlobalSearchScope.allScope(mProject));
+            VirtualFile currFile = DataKeys.VIRTUAL_FILE.getData(anActionEvent.getDataContext());
+
+            if (currFile == null) {
+                return;
+            }
+
+            // 通过当前layout文件获取res 目录
+            VirtualFile resDir = currFile.getParent().getParent();
+            // 获取values 下的styles.xml 通过这种相对路径的方式查找 避免项目中有多个模块的时候找到另外一个模块中
+            VirtualFile valuesDir = resDir.findChild("values");
+            VirtualFile styleVFile = valuesDir.findChild("styles.xml");
+            if (styleVFile == null) {
+
+                XmlFile styleFile = (XmlFile) PsiFileFactory.getInstance(mProject)
+                        .createFileFromText("styles.xml", StdFileTypes.XML, "<resources></resources>");
+
+                // 新建styles.xml
+                doWrite(() -> {
+                    addStyle(styleFile, styleName, attributeList);
+                    PsiManager.getInstance(mProject).findDirectory(valuesDir).add(styleFile);
+                });
+            } else {
+                PsiFile psiFile = PsiManager.getInstance(mProject).findFile(styleVFile);
+                XmlFile styleFile = (XmlFile) PsiManager.getInstance(mProject).findFile(psiFile.getVirtualFile());
+                addStyle(styleFile, styleName, attributeList);
+            }
+
+
+            /*PsiFile[] psiFiles = FilenameIndex.getFilesByName(mProject, "styles.xml", GlobalSearchScope.allScope(mProject));
 
             PsiFile psiFile = null;
             for (PsiFile file : psiFiles) {
@@ -84,68 +112,30 @@ public class ConvertStyleAction extends BaseAnAction {
                     psiFile = file;
                     break;
                 }
-            }
-
-            // 没有style 属性文件，新建
-            if (psiFile == null) {
-                showTip("未找到样式文件styles.xml");
-                return;
-            }
-
-            XmlFile styleFile = (XmlFile) PsiManager.getInstance(mProject).findFile(psiFile.getVirtualFile());
-
-            XmlTag rootTag = styleFile.getDocument().getRootTag();
-
-            XmlTag[] subTags = rootTag.getSubTags();
-            for (XmlTag tag : subTags) {
-                if (styleName.equals(tag.getName())) {
-                    showTip("\"" + styleName + "\"style 已经存在");
-                    return;
-                }
-                log(tag.getName() + " " + tag.getNamespace() + " " + tag.getText());
-            }
-
-            doWrite(() -> {
-                // name namespace value
-                XmlTag styleTag = rootTag.createChildTag("style", null, null, false);
-                styleTag.setAttribute("name", styleName);
-
-                // 遍历属性集合 转成style item
-                for (String a : attributeList) {
-                    List<String> itemList = match("[^=\"]+", a);
-                    String name = itemList.get(0);
-                    String value = itemList.get(1);
-
-                    XmlTag tag = styleTag.createChildTag("item", null, value, false);
-                    tag.setAttribute("name", name);
-                    styleTag.addSubTag(tag, false);
-                }
-                rootTag.addSubTag(styleTag, false);
-                // 格式化代码
-                CodeStyleManager.getInstance(mProject).reformat(styleFile);
-
-                // 替换选中的内容
-                editor.getDocument().replaceString(selectionModel.getSelectionStart(), selectionModel.getSelectionEnd(), "style=\"@style/" + styleName + "\"");
-            });
+            }*/
         }
     }
 
-    /*class XmlAdder extends WriteCommandAction.Simple {
+    /**
+     * 往styles.xml 中添加style
+     *
+     * @param styleFile
+     * @param styleName
+     * @param attributeList
+     */
+    private void addStyle(XmlFile styleFile, String styleName, List<String> attributeList) {
+        XmlTag rootTag = styleFile.getDocument().getRootTag();
 
-        private String styleName;
-        private XmlTag rootTag;
-        List<String> attributeList;
-
-        protected XmlAdder(Project project, PsiFile files, String styleName, XmlTag rootTag, List<String> attributeList) {
-            super(project, files);
-            this.styleName = styleName;
-            this.rootTag = rootTag;
-            this.attributeList = attributeList;
+        XmlTag[] subTags = rootTag.getSubTags();
+        for (XmlTag tag : subTags) {
+            if (styleName.equals(tag.getName())) {
+                showTip("\"" + styleName + "\"style 已经存在");
+                return;
+            }
+            log(tag.getName() + " " + tag.getNamespace() + " " + tag.getText());
         }
 
-        @Override
-        protected void run() throws Throwable {
-
+        doWrite(() -> {
             // name namespace value
             XmlTag styleTag = rootTag.createChildTag("style", null, null, false);
             styleTag.setAttribute("name", styleName);
@@ -161,12 +151,13 @@ public class ConvertStyleAction extends BaseAnAction {
                 styleTag.addSubTag(tag, false);
             }
             rootTag.addSubTag(styleTag, false);
+            // 格式化代码
+            CodeStyleManager.getInstance(mProject).reformat(styleFile);
 
             // 替换选中的内容
             editor.getDocument().replaceString(selectionModel.getSelectionStart(), selectionModel.getSelectionEnd(), "style=\"@style/" + styleName + "\"");
-        }
-
-    }*/
+        });
+    }
 
     private List<String> match(String regex, String inputText) {
         Pattern pattern = Pattern.compile(regex);
