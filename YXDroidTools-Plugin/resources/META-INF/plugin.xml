@@ -1,14 +1,14 @@
 <idea-plugin>
     <id>org.yxdroid.plugin.yxdroidtools</id>
     <name>YXDroid Tools</name>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <vendor email="org.yxdroid@gmail.com" url="https://github.com/yxdroid/YXDroidTools-Plugin">yxdroid</vendor>
 
     <description><![CDATA[
-      the android development tools，include the following:<br>
-      <em>Generate JNI</em>
-      <em>Generate Selector</em>
-      <em>Convert Style</em>
+      The android development tools,include the following:<br>
+      <em>Generate JNI</em><br>
+      <em>Generate Selector</em><br>
+      <em>Convert Style</em><br>
     ]]></description>
 
     <change-notes><![CDATA[
